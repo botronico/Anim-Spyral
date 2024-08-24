@@ -1,0 +1,53 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.animation as animation
+from IPython.display import Image
+
+# Configuración inicial
+num_cuadrados = 100
+centro_x, centro_y = 0.5, 0.5
+radio_inicial = 0.1
+incremento_radio = 0.2
+incremento_angulo = 0.1
+colores = ['#404040', '#ff004d', '#be0039', '#ff77a8', '#ffd700', '#00e756', '#29adff', '#83769c']
+
+# Crear una figura y un eje
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.set_aspect('equal')
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.axis('off')  # Ocultar los ejes
+
+# Función de actualización para cada frame
+def update(frame):
+    ax.clear()  # Limpia el eje para dibujar el siguiente frame
+    ax.set_aspect('equal')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis('off')
+
+    angulo = 0
+    for i in range(frame):
+        radio = i * incremento_radio / 100  # Escala del radio para adaptarse al gráfico
+        x = centro_x + np.cos(angulo) * radio
+        y = centro_y + np.sin(angulo) * radio
+        lado_cuadrado = radio * 0.07
+        color = colores[i % len(colores)]
+        
+        # Crear y agregar un cuadrado
+        square = plt.Rectangle((x, y), lado_cuadrado, lado_cuadrado, color=color, angle=np.degrees(angulo))
+        ax.add_patch(square)
+        
+        # Incrementar el ángulo
+        angulo += incremento_angulo
+
+    return ax.patches
+
+# Crear la animación
+ani = animation.FuncAnimation(fig, update, frames=num_cuadrados, blit=True, repeat=False)
+
+# Guardar la animación como un archivo GIF
+ani.save("animacion.gif", writer="pillow", fps=30)
+
+# Mostrar el GIF en Google Colab
+Image(filename="animacion.gif")
